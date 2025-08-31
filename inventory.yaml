@@ -16,6 +16,7 @@ all:
         # ---- Auth (set via Vault or env; update as needed) ----
         ansible_user: admin
         ansible_password: ""
+        ansible_python_interpreter: /usr/bin/python3
 
     # Existing site/device groups
     DIST:
