@@ -7,7 +7,7 @@ all:
         ACC: {}
       vars:
         # ---- Connection settings (HTTPAPI for Aruba AOS-CX) ----
-        ansible_connection: httpapi
+        ansible_connection: arubanetworks.aoscx.aoscx
         ansible_network_os: arubanetworks.aoscx.aoscx
         ansible_httpapi_use_ssl: true
         ansible_httpapi_validate_certs: false
@@ -16,7 +16,6 @@ all:
         # ---- Auth (set via Vault or env; update as needed) ----
         ansible_user: admin
         ansible_password: ""
-        ansible_python_interpreter: /usr/bin/python3
 
     # Existing site/device groups
     DIST:
