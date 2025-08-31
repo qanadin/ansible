@@ -27,4 +27,4 @@
       aoscx_vlan:
         vlan_id: "{{ vlan_id | int }}"
         name: "{{ vlan_name }}"
-        state: present
+        state: create
