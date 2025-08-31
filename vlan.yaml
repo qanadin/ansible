@@ -1,5 +1,3 @@
-
-
 ---
 - name: Create or update VLAN on Aruba AOS-CX
   hosts: aruba_cx
@@ -12,24 +10,22 @@
     - name: vlan_id
       prompt: "Enter VLAN ID (1-4094)"
       private: no
+      type: integer
     - name: vlan_name
       prompt: "Enter VLAN name/description"
       private: no
-
-  vars:
-    vlan_id_int: "{{ vlan_id | int }}"
 
   pre_tasks:
     - name: Validate VLAN ID range
       assert:
         that:
-          - vlan_id_int >= 1
-          - vlan_id_int <= 4094
+          - (vlan_id | int) >= 1
+          - (vlan_id | int) <= 4094
         fail_msg: "VLAN ID must be between 1 and 4094. Got {{ vlan_id }}."
 
   tasks:
     - name: Ensure VLAN exists
       aoscx_vlan:
-        vlan_id: "{{ vlan_id_int }}"
+        vlan_id: "{{ vlan_id | int }}"
         name: "{{ vlan_name }}"
         state: present
