@@ -1,26 +1,33 @@
 all:
   children:
+    # Master group targeted by facts.yaml
+    aruba_cx:
+      children:
+        DIST: {}
+        ACC: {}
+      vars:
+        # ---- Connection settings (HTTPAPI for Aruba AOS-CX) ----
+        ansible_connection: httpapi
+        ansible_network_os: arubanetworks.aoscx.aoscx
+        ansible_httpapi_use_ssl: true
+        ansible_httpapi_validate_certs: false
+        ansible_httpapi_port: 443
+
+        # ---- Auth (set via Vault or env; update as needed) ----
+        ansible_user: admin
+        ansible_password: ""
+
+    # Existing site/device groups
     DIST:
       hosts:
         DIST1:
           ansible_host: 10.0.0.2
         DIST2:
           ansible_host: 10.0.0.3
+
     ACC:
       hosts:
         ACC1:
           ansible_host: 10.0.0.4
         ACC2:
           ansible_host: 10.0.0.5
-  vars:
-    # ---- Common auth (change to your creds or Ansible Vault vars) ----
-    ansible_user: admin
-    ansible_password: ""
-
-    # ---- Connection settings (HTTPAPI for Aruba AOS-CX) ----
-    ansible_connection: httpapi
-    ansible_network_os: arubanetworks.aoscx.aoscx
-    ansible_httpapi_use_ssl: true
-    ansible_httpapi_validate_certs: false
-    # Optional: uncomment to set an explicit API port (defaults to 443)
-    # ansible_httpapi_port: 443
