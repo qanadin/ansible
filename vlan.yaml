@@ -10,7 +10,6 @@
     - name: vlan_id
       prompt: "Enter VLAN ID (1-4094)"
       private: no
-      type: integer
     - name: vlan_name
       prompt: "Enter VLAN name/description"
       private: no
