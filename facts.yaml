@@ -1,0 +1,70 @@
+
+
+---
+# Playbook: Gather facts from Aruba AOS-CX switches
+# Requirements:
+#   - ansible-galaxy collection install arubanetworks.aoscx
+# Inventory expectations (group: aruba_cx):
+#   - ansible_connection: httpapi
+#   - ansible_network_os: arubanetworks.aoscx.aoscx
+#   - ansible_httpapi_use_ssl: true
+#   - ansible_httpapi_validate_certs: false   # lab: ignore certs
+#   - ansible_httpapi_port: 443
+#   - ansible_user / ansible_password (or use a vault)
+
+- name: Gather Aruba CX facts and save to files
+  hosts: aruba_cx
+  gather_facts: no
+  collections:
+    - arubanetworks.aoscx
+
+  vars:
+    facts_out_dir: "./facts"
+
+  pre_tasks:
+    - name: Ensure we are using httpapi against AOS-CX
+      assert:
+        that:
+          - ansible_connection == 'httpapi'
+          - ansible_network_os is search('arubanetworks\.aoscx')
+        fail_msg: >-
+          This playbook expects httpapi with arubanetworks.aoscx (AOS-CX). Check your inventory/group_vars.
+
+    - name: Create local output directory
+      delegate_to: localhost
+      run_once: true
+      file:
+        path: "{{ facts_out_dir }}"
+        state: directory
+        mode: '0755'
+
+  tasks:
+    - name: Gather AOS-CX facts (all)
+      aoscx_facts:
+      register: aoscx
+
+    - name: Set structured facts variable
+      set_fact:
+        cx_facts: "{{ aoscx.ansible_facts | default({}) }}"
+
+    - name: Show short summary
+      debug:
+        msg:
+          hostname: "{{ inventory_hostname }}"
+          model: "{{ cx_facts.get('ansible_net_model', 'unknown') }}"
+          os_version: "{{ cx_facts.get('ansible_net_version', 'unknown') }}"
+          serial: "{{ cx_facts.get('ansible_net_serialnum', 'unknown') }}"
+
+    - name: Save facts as JSON (one file per host)
+      delegate_to: localhost
+      copy:
+        dest: "{{ facts_out_dir }}/{{ inventory_hostname }}.json"
+        content: "{{ cx_facts | to_nice_json }}"
+        mode: '0644'
+
+    - name: Save facts as YAML (one file per host)
+      delegate_to: localhost
+      copy:
+        dest: "{{ facts_out_dir }}/{{ inventory_hostname }}.yml"
+        content: "{{ cx_facts | to_nice_yaml }}"
+        mode: '0644'
