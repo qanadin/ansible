@@ -7,7 +7,7 @@ all:
         ACC: {}
       vars:
         # ---- Connection settings (HTTPAPI for Aruba AOS-CX) ----
-        ansible_connection: arubanetworks.aoscx.aoscx
+        ansible_connection: httpapi
         ansible_network_os: arubanetworks.aoscx.aoscx
         ansible_httpapi_use_ssl: true
         ansible_httpapi_validate_certs: false
