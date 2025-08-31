@@ -1,33 +1,29 @@
 all:
   children:
-    # Master group targeted by facts.yaml
     aruba_cx:
       children:
         DIST: {}
         ACC: {}
       vars:
-        # ---- Connection settings (HTTPAPI for Aruba AOS-CX) ----
-        ansible_connection: httpapi
+        # ---- AOS-CX connection plugin (PYAOSCX-backed) ----
+        ansible_connection: arubanetworks.aoscx.aoscx
         ansible_network_os: arubanetworks.aoscx.aoscx
-        ansible_httpapi_use_ssl: true
-        ansible_httpapi_validate_certs: false
-        ansible_httpapi_port: 443
 
-        # ---- Auth (set via Vault or env; update as needed) ----
+        # Auth
         ansible_user: admin
         ansible_password: ""
 
-    # Existing site/device groups
+        # TLS/cert handling (lab)
+        ansible_aoscx_validate_certs: false
+        # Optional if using proxies in your shell; usually best off for labs:
+        ansible_aoscx_use_proxy: false
+
     DIST:
       hosts:
-        DIST1:
-          ansible_host: 10.0.0.2
-        DIST2:
-          ansible_host: 10.0.0.3
+        DIST1: { ansible_host: 10.0.0.2 }
+        DIST2: { ansible_host: 10.0.0.3 }
 
     ACC:
       hosts:
-        ACC1:
-          ansible_host: 10.0.0.4
-        ACC2:
-          ansible_host: 10.0.0.5
+        ACC1: { ansible_host: 10.0.0.4 }
+        ACC2: { ansible_host: 10.0.0.5 }
